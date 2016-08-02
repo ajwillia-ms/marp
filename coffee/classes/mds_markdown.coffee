@@ -7,7 +7,7 @@ MdsMdSetting = require './mds_md_setting'
 {exist}      = require './mds_file'
 
 module.exports = class MdsMarkdown
-  @slideTagOpen:  (page) -> '<div class="slide_wrapper" id="' + page + '"><div class="slide"><div class="slide_bg"></div><div class="slide_inner">'
+  @slideTagOpen:  (page) -> '<div class="slide_wrapper" id="' + page + '"><div class="slide"><div class="slide_bg"></div><div class="slide_header"></div><div class="slide_inner">'
   @slideTagClose: (page) -> '</div><footer class="slide_footer"></footer><span class="slide_page" data-page="' + page + '">' + page + '</span></div></div>'
 
   @highlighter: (code, lang) ->

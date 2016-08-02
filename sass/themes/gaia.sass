@@ -69,6 +69,15 @@ $highlight-color: #0288d1
     line-height: calc(0.045px * var(--slide-height))
     font-size: calc(0.025px * var(--slide-height))
 
+  .slide_header
+    position: absolute
+    width: 100%;
+    height: 5em;
+    top: 0
+    left: 0
+
+    border-bottom: 1px solid $text-color
+
   .slide_wrapper
     > .slide
       background-image: linear-gradient(135deg, rgba(#000, 0), rgba(#000, .02) 50%, rgba(#fff, 0) 50%, rgba(#fff, .05))
@@ -87,6 +96,9 @@ $highlight-color: #0288d1
     &.only-headings
       h1, h2, h3, h4, h5, h6
         text-align: center
+
+      .slide_header
+        display: none
 
     h1
       font-size: 1.8em
