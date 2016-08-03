@@ -83,7 +83,7 @@ module.exports = class MdsMarkdown
           innerContents = inner.children().filter(':not(base, link, meta, noscript, script, style, template, title)')
 
           headsLength = inner.children(':header').length
-          $t.addClass('only-headings') if headsLength > 0 && innerContents.length == headsLength
+          $t.addClass('only-headings') if headsLength >= 0 && innerContents.length == headsLength
 
           quotesLength = inner.children('blockquote').length
           $t.addClass('only-blockquotes') if quotesLength > 0 && innerContents.length == quotesLength
