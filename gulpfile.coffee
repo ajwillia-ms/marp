@@ -14,7 +14,7 @@ packageOpts =
   dir: 'dist'
   out: 'packages'
   name: config.name
-  version: config.dependencies['electron-prebuilt']
+  version: config.devDependencies['electron']
   prune: true
   overwrite: true
   'app-bundle-id': 'jp.yhatt.marp'
@@ -107,6 +107,7 @@ gulp.task 'dist', ['clean:dist'], ->
     '*.html'
     'package.json'
     'example.md'
+    'LICENSE'
   ], { base: '.' })
     .pipe gulp.dest('dist')
     .pipe $.install
@@ -207,7 +208,3 @@ gulp.task 'archive:linux', (done) ->
   , done
 
 gulp.task 'release', (done) -> runSequence 'build', 'archive', 'clean', done
-
-gulp.task 'run', ['compile'], ->
-  gulp.src '.'
-    .pipe $.runElectron(['--development'])

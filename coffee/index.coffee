@@ -27,7 +27,11 @@ class EditorStates
 
     @menu = new MdsMenu [
       { label: '&Undo', accelerator: 'CmdOrCtrl+Z', click: (i, w) => @codeMirror.execCommand 'undo' if w and !w.mdsWindow.freeze }
-      { label: '&Redo', accelerator: 'Shift+CmdOrCtrl+Z', click: (i, w) => @codeMirror.execCommand 'redo' if w and !w.mdsWindow.freeze }
+      {
+        label: '&Redo'
+        accelerator: do -> if process.platform is 'win32' then 'Control+Y' else 'Shift+CmdOrCtrl+Z'
+        click: (i, w) => @codeMirror.execCommand 'redo' if w and !w.mdsWindow.freeze
+      }
       { type: 'separator' }
       { label: 'Cu&t', accelerator: 'CmdOrCtrl+X', role: 'cut' }
       { label: '&Copy', accelerator: 'CmdOrCtrl+C', role: 'copy' }
@@ -109,7 +113,7 @@ class EditorStates
     else
       @_imageDirectory = directory
 
-  insertImage: (filePath) => @codeMirror.replaceSelection("![](#{filePath})\n")
+  insertImage: (filePath) => @codeMirror.replaceSelection("![](#{filePath.replace(/ /g, '%20')})\n")
 
   updateGlobalSetting: (prop, value) =>
     latestPos = null
@@ -175,6 +179,11 @@ do ->
 
     return splitPoint
 
+  setEditorConfig = (editorConfig) ->
+    editor = $(editorStates.codeMirror?.getWrapperElement())
+    editor.css('font-family', editorConfig.fontFamily) if editor?
+    editor.css('font-size', editorConfig.fontSize) if editor?
+
   $('.pane-splitter')
     .mousedown ->
       draggingSplitter = true
@@ -215,7 +224,7 @@ do ->
             printBackground: true
           , (err, data) ->
             unless err
-              MdsRenderer.sendToMain 'writeFile', opts.filename, data, 'unfreeze'
+              MdsRenderer.sendToMain 'writeFile', opts.filename, data, { finalized: 'unfreeze' }
             else
               MdsRenderer.sendToMain 'unfreeze'
 
@@ -233,8 +242,8 @@ do ->
 
     .on 'setImageDirectory', (directories) -> editorStates.setImageDirectory directories
 
-    .on 'save', (fname, triggerOnSucceeded = null) ->
-      MdsRenderer.sendToMain 'writeFile', fname, editorStates.codeMirror.getValue(), triggerOnSucceeded
+    .on 'save', (fname, triggers = {}) ->
+      MdsRenderer.sendToMain 'writeFile', fname, editorStates.codeMirror.getValue(), triggers
       MdsRenderer.sendToMain 'initializeState', fname
 
     .on 'viewMode', (mode) ->
@@ -258,6 +267,7 @@ do ->
       else
         editorStates.preview.openDevTools()
 
+    .on 'setEditorConfig', (editorConfig) -> setEditorConfig editorConfig
     .on 'setSplitter', (spliiterPos) -> setSplitter spliiterPos
     .on 'setTheme', (theme) -> editorStates.updateGlobalSetting '$theme', theme
     .on 'themeChanged', (theme) -> MdsRenderer.sendToMain 'themeChanged', theme
